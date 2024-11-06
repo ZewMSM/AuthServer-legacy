@@ -1,0 +1,43 @@
+version: "3.8"
+
+name: "zewmsm"
+
+services:
+  auth_server:
+    networks:
+      - zewmsm
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      POSTGRES_USER: $POSTGRES_USER
+      POSTGRES_PASSWD: $POSTGRES_PASSWD
+      POSTGRES_HOST: $POSTGRES_HOST
+      POSTGRES_PORT: $POSTGRES_PORT
+      POSTGRES_NAME: $POSTGRES_NAME
+
+      REDIS_AUTH_HOST: $REDIS_AUTH_HOST
+      REDIS_AUTH_PORT: $REDIS_AUTH_PORT
+
+      DLC_DOMAIN: $DLC_DOMAIN
+      SERVER_IP: $SERVER_IP
+      GAME_SERVICE_MODE: $GAME_SERVICE_MODE
+
+      TOKEN_IV: $TOKEN_IV
+      TOKEN_KEY: $TOKEN_KEY
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "/Users/zewsic/projects/ZewMSM/game_content:/app/content"
+      - "./ssl:/etc/ssl"
+    restart: unless-stopped
+  redis_auth:
+    image: redis:latest
+    networks:
+      - zewmsm
+    restart: unless-stopped
+
+networks:
+  zewmsm:
+    external: true

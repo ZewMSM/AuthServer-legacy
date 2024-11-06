@@ -1,0 +1,135 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [auth_server internal] load build definition from Dockerfile
+#1 transferring dockerfile: 204B done
+#1 DONE 0.0s
+
+#2 [auth_server internal] load metadata for docker.io/library/python:3.12-slim-bullseye
+#2 DONE 2.1s
+
+#3 [auth_server internal] load .dockerignore
+#3 transferring context: 69B done
+#3 DONE 0.0s
+
+#4 [auth_server 1/5] FROM docker.io/library/python:3.12-slim-bullseye@sha256:dbdf1a8e375131679547183a70bdb4f9c512946a4ae42de172d59b151c3da5b7
+#4 DONE 0.0s
+
+#5 [auth_server internal] load build context
+#5 transferring context: 1.44MB 0.4s done
+#5 DONE 0.4s
+
+#4 [auth_server 1/5] FROM docker.io/library/python:3.12-slim-bullseye@sha256:dbdf1a8e375131679547183a70bdb4f9c512946a4ae42de172d59b151c3da5b7
+#4 CACHED
+
+#6 [auth_server 2/5] COPY requirements.txt /app/requirements.txt
+#6 DONE 0.0s
+
+#7 [auth_server 3/5] WORKDIR /app
+#7 DONE 0.0s
+
+#8 [auth_server 4/5] RUN pip install -r requirements.txt
+#8 1.361 Collecting annotated-types==0.7.0 (from -r requirements.txt (line 1))
+#8 1.835   Downloading annotated_types-0.7.0-py3-none-any.whl.metadata (15 kB)
+#8 2.028 Collecting anyio==4.6.0 (from -r requirements.txt (line 2))
+#8 2.150   Downloading anyio-4.6.0-py3-none-any.whl.metadata (4.6 kB)
+#8 2.316 Collecting asgiref==3.8.1 (from -r requirements.txt (line 3))
+#8 2.438   Downloading asgiref-3.8.1-py3-none-any.whl.metadata (9.3 kB)
+#8 2.755 Collecting asyncpg==0.29.0 (from -r requirements.txt (line 4))
+#8 3.064   Downloading asyncpg-0.29.0-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl.metadata (4.4 kB)
+#8 3.248 Collecting Booktype==1.5 (from -r requirements.txt (line 5))
+#8 3.404   Downloading Booktype-1.5.tar.gz (3.1 MB)
+#8 4.846      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.1/3.1 MB 2.4 MB/s eta 0:00:00
+#8 5.201   Installing build dependencies: started
+#8 7.770   Installing build dependencies: finished with status 'done'
+#8 7.771   Getting requirements to build wheel: started
+#8 7.929   Getting requirements to build wheel: finished with status 'done'
+#8 7.929   Preparing metadata (pyproject.toml): started
+#8 8.063   Preparing metadata (pyproject.toml): finished with status 'done'
+#8 8.182 Collecting click==8.1.7 (from -r requirements.txt (line 6))
+#8 8.304   Downloading click-8.1.7-py3-none-any.whl.metadata (3.0 kB)
+#8 8.518 Collecting Django==5.1.2 (from -r requirements.txt (line 7))
+#8 8.621   Downloading Django-5.1.2-py3-none-any.whl.metadata (4.2 kB)
+#8 8.840 Collecting fastapi==0.115.2 (from -r requirements.txt (line 8))
+#8 8.991   Downloading fastapi-0.115.2-py3-none-any.whl.metadata (27 kB)
+#8 9.141 Collecting h11==0.14.0 (from -r requirements.txt (line 9))
+#8 9.252   Downloading h11-0.14.0-py3-none-any.whl.metadata (8.2 kB)
+#8 9.400 Collecting idna==3.10 (from -r requirements.txt (line 10))
+#8 9.525   Downloading idna-3.10-py3-none-any.whl.metadata (10 kB)
+#8 9.786 Collecting pydantic==2.9.2 (from -r requirements.txt (line 11))
+#8 9.898   Downloading pydantic-2.9.2-py3-none-any.whl.metadata (149 kB)
+#8 10.69 Collecting pydantic_core==2.23.4 (from -r requirements.txt (line 12))
+#8 10.81   Downloading pydantic_core-2.23.4-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl.metadata (6.6 kB)
+#8 11.08 Collecting setuptools==75.1.0 (from -r requirements.txt (line 13))
+#8 11.08   Using cached setuptools-75.1.0-py3-none-any.whl.metadata (6.9 kB)
+#8 11.27 Collecting simplejson==3.19.3 (from -r requirements.txt (line 14))
+#8 11.39   Downloading simplejson-3.19.3-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl.metadata (3.2 kB)
+#8 11.51 Collecting sniffio==1.3.1 (from -r requirements.txt (line 15))
+#8 11.62   Downloading sniffio-1.3.1-py3-none-any.whl.metadata (3.9 kB)
+#8 12.05 Collecting SQLAlchemy==2.0.35 (from -r requirements.txt (line 16))
+#8 12.17   Downloading SQLAlchemy-2.0.35-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl.metadata (9.6 kB)
+#8 12.35 Collecting sqlparse==0.5.1 (from -r requirements.txt (line 17))
+#8 12.45   Downloading sqlparse-0.5.1-py3-none-any.whl.metadata (3.9 kB)
+#8 12.62 Collecting starlette==0.39.2 (from -r requirements.txt (line 18))
+#8 12.73   Downloading starlette-0.39.2-py3-none-any.whl.metadata (6.0 kB)
+#8 12.89 Collecting typing_extensions==4.12.2 (from -r requirements.txt (line 19))
+#8 13.00   Downloading typing_extensions-4.12.2-py3-none-any.whl.metadata (3.0 kB)
+#8 13.18 Collecting uvicorn==0.31.1 (from -r requirements.txt (line 20))
+#8 13.30   Downloading uvicorn-0.31.1-py3-none-any.whl.metadata (6.6 kB)
+#8 13.49 Collecting redis==5.1.1 (from -r requirements.txt (line 21))
+#8 13.62   Downloading redis-5.1.1-py3-none-any.whl.metadata (9.1 kB)
+#8 13.90 Collecting greenlet!=0.4.17 (from SQLAlchemy==2.0.35->-r requirements.txt (line 16))
+#8 14.02   Downloading greenlet-3.1.1-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl.metadata (3.8 kB)
+#8 14.15 Downloading annotated_types-0.7.0-py3-none-any.whl (13 kB)
+#8 14.29 Downloading anyio-4.6.0-py3-none-any.whl (89 kB)
+#8 14.41 Downloading asgiref-3.8.1-py3-none-any.whl (23 kB)
+#8 14.59 Downloading asyncpg-0.29.0-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl (3.2 MB)
+#8 15.40    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.2/3.2 MB 3.9 MB/s eta 0:00:00
+#8 15.55 Downloading click-8.1.7-py3-none-any.whl (97 kB)
+#8 15.71 Downloading Django-5.1.2-py3-none-any.whl (8.3 MB)
+#8 17.01    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 8.3/8.3 MB 6.3 MB/s eta 0:00:00
+#8 17.14 Downloading fastapi-0.115.2-py3-none-any.whl (94 kB)
+#8 17.32 Downloading h11-0.14.0-py3-none-any.whl (58 kB)
+#8 17.45 Downloading idna-3.10-py3-none-any.whl (70 kB)
+#8 17.59 Downloading pydantic-2.9.2-py3-none-any.whl (434 kB)
+#8 17.81 Downloading pydantic_core-2.23.4-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl (1.8 MB)
+#8 17.99    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.8/1.8 MB 8.8 MB/s eta 0:00:00
+#8 17.99 Using cached setuptools-75.1.0-py3-none-any.whl (1.2 MB)
+#8 18.09 Downloading simplejson-3.19.3-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl (150 kB)
+#8 18.25 Downloading sniffio-1.3.1-py3-none-any.whl (10 kB)
+#8 18.43 Downloading SQLAlchemy-2.0.35-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl (3.2 MB)
+#8 18.77    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.2/3.2 MB 9.0 MB/s eta 0:00:00
+#8 18.89 Downloading sqlparse-0.5.1-py3-none-any.whl (44 kB)
+#8 19.06 Downloading starlette-0.39.2-py3-none-any.whl (73 kB)
+#8 19.17 Downloading typing_extensions-4.12.2-py3-none-any.whl (37 kB)
+#8 19.30 Downloading uvicorn-0.31.1-py3-none-any.whl (63 kB)
+#8 19.43 Downloading redis-5.1.1-py3-none-any.whl (261 kB)
+#8 19.58 Downloading greenlet-3.1.1-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl (649 kB)
+#8 19.65    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 649.1/649.1 kB 8.8 MB/s eta 0:00:00
+#8 19.70 Building wheels for collected packages: Booktype
+#8 19.71   Building wheel for Booktype (pyproject.toml): started
+#8 20.81   Building wheel for Booktype (pyproject.toml): finished with status 'done'
+#8 20.81   Created wheel for Booktype: filename=Booktype-1.5-py3-none-any.whl size=4050099 sha256=ee29c2bb50ebb31ff706e68d6f14b8390e32b14e538f0474739f13c814eb4e8c
+#8 20.81   Stored in directory: /root/.cache/pip/wheels/62/08/3f/d92cda2515d6ed64b7452ca53c458bf970a60b23c07f5c4456
+#8 20.82 Successfully built Booktype
+#8 20.91 Installing collected packages: typing_extensions, sqlparse, sniffio, simplejson, setuptools, redis, idna, h11, greenlet, click, asyncpg, asgiref, annotated-types, uvicorn, SQLAlchemy, pydantic_core, Django, anyio, starlette, pydantic, Booktype, fastapi
+#8 24.42 Successfully installed Booktype-1.5 Django-5.1.2 SQLAlchemy-2.0.35 annotated-types-0.7.0 anyio-4.6.0 asgiref-3.8.1 asyncpg-0.29.0 click-8.1.7 fastapi-0.115.2 greenlet-3.1.1 h11-0.14.0 idna-3.10 pydantic-2.9.2 pydantic_core-2.23.4 redis-5.1.1 setuptools-75.1.0 simplejson-3.19.3 sniffio-1.3.1 sqlparse-0.5.1 starlette-0.39.2 typing_extensions-4.12.2 uvicorn-0.31.1
+#8 24.42 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable.It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+#8 DONE 25.2s
+
+#9 [auth_server 5/5] COPY . /app
+#9 DONE 0.7s
+
+#10 [auth_server] exporting to image
+#10 exporting layers
+#10 exporting layers 0.7s done
+#10 writing image sha256:5e5e7a9b627c84dcaa0a69f44245c3c515566f47703bd47b94a16f4cdb57c66f
+#10 writing image sha256:5e5e7a9b627c84dcaa0a69f44245c3c515566f47703bd47b94a16f4cdb57c66f done
+#10 naming to docker.io/library/zewmsm-auth_server done
+#10 DONE 0.7s
+Attaching to auth_server-1, redis_auth-1
+auth_server-1 exited with code 0
+auth_server-1 exited with code 1
+auth_server-1 exited with code 1
+auth_server-1 exited with code 1
+auth_server-1 exited with code 1
+auth_server-1 exited with code 1

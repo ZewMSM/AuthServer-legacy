@@ -1,0 +1,7 @@
+asyncpg
+fastapi
+SQLAlchemy
+uvicorn
+redis
+pycryptodome
+python-multipart
