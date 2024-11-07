@@ -77,6 +77,6 @@ async def dlc(version: str, user_id: int, rev_hash: str, file_path):
 
 async def start_auth_server():
     logger.info("Starting auth server...")
-    config = uvicorn.Config(app, host="0.0.0.0", port=80, log_level="info")
+    config = uvicorn.Config(app, host="0.0.0.0", port=80, log_level="info", ssl_keyfile="/etc/ssl/ssl.key", ssl_certfile="/etc/ssl/ssl.crt")
     server = uvicorn.Server(config)
     await server.serve()
