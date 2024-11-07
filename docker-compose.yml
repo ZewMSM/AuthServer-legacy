@@ -30,7 +30,7 @@ services:
       - "443:443"
     volumes:
       - "/Users/zewsic/projects/ZewMSM/game_content:/app/content"
-      - "./ssl:/etc/ssl"
+      - "./ssl:/ssl"
     restart: unless-stopped
   redis_auth:
     image: redis:latest
