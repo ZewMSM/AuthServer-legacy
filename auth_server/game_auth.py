@@ -228,7 +228,7 @@ async def pregame_setup(access_token, access_key, client_version):
         return AuthResponse.send_message("SERVERS_NOT_WORK_SUKA_BLYAT_MESSAGE")
 
     content_url = generate_content_url(client_version, user)
-    return AuthResponse.send_ok({"serverIp": environ.get('SERVER_IP'), "serverId": 1, "contentUrl": content_url})
+    return AuthResponse.send_ok({"serverIp": environ.get('SERVER_IP') if 'localhost' not in user.rights else '127.0.0.1', "serverId": 1, "contentUrl": content_url})
 
 
 async def get_dlc_file(client_version, file_path, user_id: int):
