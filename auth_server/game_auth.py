@@ -9,7 +9,8 @@ from starlette.config import environ
 
 from config import GameConfig
 from database.user import User
-from utils import md5, get_country_by_ip, aes_encrypt, uncache_login_data, cache_login_data, aes_decrypt, valid_email, get_all_files_in_dir
+from utils import md5, get_country_by_ip, aes_encrypt, uncache_login_data, cache_login_data, aes_decrypt, valid_email, \
+    get_all_files_in_dir, uncache_file_obj, cache_file_obj
 from fastapi.responses import FileResponse
 
 logger = logging.getLogger('GameAuth')
@@ -234,16 +235,17 @@ async def get_dlc_file(client_version, file_path, user_id: int):
     if "files.json" in file_path:
         user = await User.load_by_id(int(user_id))
 
-        if str(client_version) == '-1' or str(client_version) == 'add-ons':
-            updates = []
-        else:
-            updates = await get_dlc_file('add-ons', 'files.json', user_id) + await get_dlc_file('-1', 'files.json', user_id)
+        updates = []
 
         if os.path.exists(f"content/updates/{client_version}/"):
             files = get_all_files_in_dir(f"content/updates/{client_version}/")
             for file in files:
+                if (cached := await uncache_file_obj(file)) is not None:
+                    updates.append(cached)
+                    continue
+
                 server_path = file
-                local_path = '/'.join(server_path.split('/')[3:])
+                local_path = '/'.join(server_path.split('/')[4:])
 
                 if local_path in [f.get('localName', 'idk') for f in updates]:
                     continue
@@ -253,10 +255,8 @@ async def get_dlc_file(client_version, file_path, user_id: int):
                     if fdata is None:
                         continue
                     file_hash = hashlib.md5(fdata).hexdigest()
-                    updates.append({"serverName": server_path, "localName": local_path, "checksum": file_hash})
+                    updates.append(await cache_file_obj(file, {"serverName": server_path, "localName": local_path, "checksum": file_hash}))
         return updates
-    if 'content/updates' not in file_path:
-        return 'нахуй иди с такими запросами'
     return FileResponse(path=file_path, filename=file_path.split('/')[-1], media_type='multipart/form-data')
 
 
