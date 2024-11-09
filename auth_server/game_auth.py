@@ -5,6 +5,7 @@ import os
 import time
 from datetime import datetime
 
+from sqlalchemy.testing.suite.test_reflection import users
 from starlette.config import environ
 
 from config import GameConfig
@@ -131,8 +132,10 @@ class AuthResponse:
 
 
 def encrypt_token(username: str, user_game_id: str, login_type, account_id, game_id, **kwargs):
-    json_data = json.dumps({"account_id": account_id, "user_game_ids": [user_game_id], "game": f'{game_id}', "token_version": 1, "generated_on": round(time.time()),
-                            "expires_at": round(time.time() + 60 * 15), "username": username.strip(), "login_type": login_type} | kwargs)
+    json_data = json.dumps(
+        {"account_id": account_id, "user_game_ids": [user_game_id], "game": f'{game_id}', "token_version": 1,
+         "generated_on": round(time.time()),
+         "expires_at": round(time.time() + 60 * 15), "username": username.strip(), "login_type": login_type} | kwargs)
     encrypted_data = aes_encrypt(json_data, environ.get("TOKEN_IV"), environ.get("TOKEN_KEY"))
     return encrypted_data
 
@@ -140,7 +143,8 @@ def encrypt_token(username: str, user_game_id: str, login_type, account_id, game
 def decrypt_token(encrypted_token):
     if encrypted_token:
         try:
-            decrypted_data = aes_decrypt(encrypted_token.encode("UTF-8"), environ.get("TOKEN_IV"), environ.get("TOKEN_KEY"))
+            decrypted_data = aes_decrypt(encrypted_token.encode("UTF-8"), environ.get("TOKEN_IV"),
+                                         environ.get("TOKEN_KEY"))
             return json.loads(decrypted_data)
         except Exception as e:
             print(e)
@@ -153,7 +157,8 @@ def generate_content_url(version, user: User):
     return f"http://{environ.get('DLC_DOMAIN') if 'localhost_dlc' not in user.rights else '127.0.0.1'}/my_singing_monsters/dlc/{version}/r{user.id}-TEST/files.json"
 
 
-async def refresh_token(username, password, login_type, game_id, vendor, model, os, devid, platform, ip_addr, is_refresh_token):
+async def refresh_token(username, password, login_type, game_id, vendor, model, os, devid, platform, ip_addr,
+                        is_refresh_token):
     cached_login_data = await uncache_login_data(game_id, username, password, login_type)
 
     if time.time() > cached_login_data.get('expires_at', 0) or is_refresh_token:
@@ -184,11 +189,14 @@ async def refresh_token(username, password, login_type, game_id, vendor, model, 
         ugid = md5(f"user_game_id:{user.id}")[:10]
         token = encrypt_token(user.username, ugid, login_type, user.id, game_id, rights=user.rights)
 
-        await cache_login_data(game_id, username, password, login_type, {'user_game_id': [ugid], 'login_types': [login_type], 'access_token': token, "token_type": "bearer", "expires_at": round(time.time() + 60 * 15)})
+        await cache_login_data(game_id, username, password, login_type,
+                               {'user_game_id': [ugid], 'login_types': [login_type], 'access_token': token,
+                                "token_type": "bearer", "expires_at": round(time.time() + 60 * 15)})
     return True, await uncache_login_data(game_id, username, password, login_type)
 
 
-async def request_auth_token(addr, username, password, login_type, game_id, device_vendor, device_model, os_version, device_id, platform, is_refresh_token):
+async def request_auth_token(addr, username, password, login_type, game_id, device_vendor, device_model, os_version,
+                             device_id, platform, is_refresh_token):
     if username is None or password is None or game_id is None:
         return AuthResponse.send_error(AuthResponse.AUTH_ERROR_MISSING_DATA)
 
@@ -201,7 +209,8 @@ async def request_auth_token(addr, username, password, login_type, game_id, devi
     if login_type not in ('email', 'anon'):
         return AuthResponse.send_error(AuthResponse.AUTH_ERROR_INVALID_TYPE)
 
-    ok, response = await refresh_token(username, password, login_type, game_id, device_vendor, device_model, os_version, device_id, platform, addr, is_refresh_token)
+    ok, response = await refresh_token(username, password, login_type, game_id, device_vendor, device_model, os_version,
+                                       device_id, platform, addr, is_refresh_token)
     if not ok:
         logger.info(f'User {username} failed to refresh token: {response}')
         return response
@@ -228,14 +237,31 @@ async def pregame_setup(access_token, access_key, client_version):
         return AuthResponse.send_message("SERVERS_NOT_WORK_SUKA_BLYAT_MESSAGE")
 
     content_url = generate_content_url(client_version, user)
-    return AuthResponse.send_ok({"serverIp": environ.get('SERVER_IP') if 'localhost' not in user.rights else '127.0.0.1', "serverId": 1, "contentUrl": content_url})
+    return AuthResponse.send_ok(
+        {"serverIp": environ.get('SERVER_IP') if 'localhost' not in user.rights else '127.0.0.1', "serverId": 1,
+         "contentUrl": content_url})
+
+
+async def add_plugins(user: User, client_version) -> list:
+    updates = []
+
+    if 'game_player' not in user.rights:
+        with open('content/plugins/important_messages/beta_testing.xml', 'rb') as f:
+            fdata = f.read()
+
+        updates.append({
+            "serverName": "content/plugins/important_messages/beta_testing.xml",
+            "localName": "menus/version_update.xml",
+            "checksum": hashlib.md5(fdata).hexdigest()
+        })
+
+    return updates
 
 
 async def get_dlc_file(client_version, file_path, user_id: int):
     if "files.json" in file_path:
         user = await User.load_by_id(int(user_id))
-
-        updates = []
+        updates = await add_plugins(user, client_version)
 
         if os.path.exists(f"content/updates/{client_version}/"):
             files = get_all_files_in_dir(f"content/updates/{client_version}/")
@@ -255,7 +281,8 @@ async def get_dlc_file(client_version, file_path, user_id: int):
                     if fdata is None:
                         continue
                     file_hash = hashlib.md5(fdata).hexdigest()
-                    updates.append(await cache_file_obj(file, {"serverName": server_path, "localName": local_path, "checksum": file_hash}))
+                    updates.append({"serverName": server_path, "localName": local_path,
+                                    "checksum": file_hash})
         return updates
     return FileResponse(path=file_path, filename=file_path.split('/')[-1], media_type='multipart/form-data')
 
@@ -278,8 +305,10 @@ async def create_anon_account(addr, game_id, device_model, device_vendor, device
         user.username = username
         user.password = md5(password)
         user.date_created = round(datetime.now().timestamp())
-        ok, response = await refresh_token(username, password, 'anon', game_id, device_vendor, device_model, os_version, device_id, platform, addr, True)
+        ok, response = await refresh_token(username, password, 'anon', game_id, device_vendor, device_model, os_version,
+                                           device_id, platform, addr, True)
     if not ok:
         return response
     del response['login_types']
-    return AuthResponse.send_ok({"username": user.username, "password": password, "login_type": "anon", "account_id": response.get("user_game_id")} | response)
+    return AuthResponse.send_ok({"username": user.username, "password": password, "login_type": "anon",
+                                 "account_id": response.get("user_game_id")} | response)

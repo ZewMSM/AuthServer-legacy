@@ -48,24 +48,24 @@ def aes_decrypt(encrypted_data, initial_vector_string, secret_key):
 
 
 async def cache_login_data(game_id, username, password, login_type, login_data):
-    await RedisSession.hset(f"cached_login_data:{game_id}", md5(f'{username}:{password}:{login_type}'),
-                            pickle.dumps(login_data))
+    await RedisSession.set(f'login:{game_id}:{username}:{password}:{login_type}',
+                            pickle.dumps(login_data), ex=60*15)
 
 
 async def uncache_login_data(game_id, username, password, login_type):
-    login_data = await RedisSession.hget(f"cached_login_data:{game_id}", md5(f'{username}:{password}:{login_type}'))
+    login_data = await RedisSession.get(f'login:{game_id}:{username}:{password}:{login_type}')
     if login_data is not None:
         return pickle.loads(login_data)
     return {}
 
 
 async def cache_file_obj(file_path, file_obj):
-    await RedisSession.hset(f"cached_file_objects", file_path, pickle.dumps(file_obj))
+    await RedisSession.set('path:' + file_path, pickle.dumps(file_obj), ex=60)
     return file_obj
 
 
 async def uncache_file_obj(file_path):
-    obj = await RedisSession.hget(f"cached_file_objects", file_path)
+    obj = await RedisSession.get('path:' + file_path)
     if obj is not None:
         return pickle.loads(obj)
     return None
