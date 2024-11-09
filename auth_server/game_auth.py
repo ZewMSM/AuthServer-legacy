@@ -176,7 +176,7 @@ async def refresh_token(username, password, login_type, game_id, vendor, model, 
             return False, AuthResponse.send_error(AuthResponse.AUTH_ERROR_PASSWORD)
         if user.country is None:
             user.country = get_country_by_ip(ip_addr)
-        if environ.get('GAME_SERVICE_MODE', 0) == 1 and 'service' not in user.rights:
+        if environ.get('GAME_SERVICE_MODE', "0") == "1" and 'service' not in user.rights:
             return False, AuthResponse.send_message("SERVERS_NOT_WORK_SUKA_BLYAT_MESSAGE")
 
         await user.add_login(ip_addr, model, vendor, os, devid, platform)
@@ -224,7 +224,7 @@ async def pregame_setup(access_token, access_key, client_version):
         return AuthResponse.send_error(AuthResponse.AUTH_ERROR_MISSING_DATA)
 
     user = await User.load_by_game_and_username(token.get("username"), int(token.get("game")))
-    if environ.get('GAME_SERVICE_MODE', 0) == 1 and 'service' not in user.rights:
+    if environ.get('GAME_SERVICE_MODE', "0") == "1" and 'service' not in user.rights:
         return AuthResponse.send_message("SERVERS_NOT_WORK_SUKA_BLYAT_MESSAGE")
 
     content_url = generate_content_url(client_version, user)
