@@ -182,7 +182,7 @@ async def refresh_token(username, password, login_type, game_id, vendor, model, 
         await user.add_login(ip_addr, model, vendor, os, devid, platform)
 
         ugid = md5(f"user_game_id:{user.id}")[:10]
-        token = encrypt_token(user.username, ugid, login_type, user.id, game_id)
+        token = encrypt_token(user.username, ugid, login_type, user.id, game_id, rights=user.rights)
 
         await cache_login_data(game_id, username, password, login_type, {'user_game_id': [ugid], 'login_types': [login_type], 'access_token': token, "token_type": "bearer", "expires_at": round(time.time() + 60 * 15)})
     return True, await uncache_login_data(game_id, username, password, login_type)

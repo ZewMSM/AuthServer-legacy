@@ -73,7 +73,9 @@ async def uncache_file_obj(file_path):
 
 def get_all_files_in_dir(dir_path):
     file_list = []
-    for root, dirs, files in os.walk(dir_path):
+    for root, dirs, files in sorted(os.walk(dir_path), key=lambda x: x[0]):
+        dirs.sort()
+        files.sort()
         for file in files:
             file_list.append(os.path.join(root, file))
     return file_list
