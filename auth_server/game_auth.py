@@ -158,7 +158,7 @@ def generate_content_url(version, user: User):
 
 
 async def refresh_token(username, password, login_type, game_id, vendor, model, os, devid, platform, ip_addr,
-                        is_refresh_token):
+                        is_refresh_token, lang=None):
     cached_login_data = await uncache_login_data(game_id, username, password, login_type)
 
     if time.time() > cached_login_data.get('expires_at', 0) or is_refresh_token:
@@ -179,6 +179,9 @@ async def refresh_token(username, password, login_type, game_id, vendor, model, 
                 return False, AuthResponse.send_error(AuthResponse.AUTH_ERROR_USERNAME)
         elif user.password != md5(password):
             return False, AuthResponse.send_error(AuthResponse.AUTH_ERROR_PASSWORD)
+
+        if lang is not None:
+            user.lang = lang
         if user.country is None:
             user.country = get_country_by_ip(ip_addr)
         if environ.get('GAME_SERVICE_MODE', "0") == "1" and 'service' not in user.rights:
@@ -196,7 +199,7 @@ async def refresh_token(username, password, login_type, game_id, vendor, model, 
 
 
 async def request_auth_token(addr, username, password, login_type, game_id, device_vendor, device_model, os_version,
-                             device_id, platform, is_refresh_token):
+                             device_id, platform, is_refresh_token, lang=None):
     if username is None or password is None or game_id is None:
         return AuthResponse.send_error(AuthResponse.AUTH_ERROR_MISSING_DATA)
 
@@ -210,7 +213,7 @@ async def request_auth_token(addr, username, password, login_type, game_id, devi
         return AuthResponse.send_error(AuthResponse.AUTH_ERROR_INVALID_TYPE)
 
     ok, response = await refresh_token(username, password, login_type, game_id, device_vendor, device_model, os_version,
-                                       device_id, platform, addr, is_refresh_token)
+                                       device_id, platform, addr, is_refresh_token, lang=lang)
     if not ok:
         logger.info(f'User {username} failed to refresh token: {response}')
         return response

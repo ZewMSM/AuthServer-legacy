@@ -51,9 +51,10 @@ async def get_auth_token(request: Request):
     device_id = params.get("device_id", None)
     platform = params.get("platform", None)
     os_version = params.get("os_version", None)
+    lang = params.get("lang", None)
 
     if game_id in (1, 27):
-        return await game_auth.request_auth_token(request.client.host, username, password, login_type, 1, device_vendor, device_model, os_version, device_id, platform, is_refresh_token)
+        return await game_auth.request_auth_token(request.client.host, username, password, login_type, 1, device_vendor, device_model, os_version, device_id, platform, is_refresh_token, lang=lang)
     logger.info(f'User {username} tried to login to undefined game!')
     return "Пошел нахуй"
 
