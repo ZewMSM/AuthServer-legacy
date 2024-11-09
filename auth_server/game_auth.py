@@ -150,7 +150,7 @@ def decrypt_token(encrypted_token):
 
 
 def generate_content_url(version, user: User):
-    return f"http://{environ.get('DLC_DOMAIN') if 'localhost' not in user.rights else '127.0.0.1'}/my_singing_monsters/dlc/{version}/r{user.id}-TEST/files.json"
+    return f"http://{environ.get('DLC_DOMAIN') if 'localhost_dlc' not in user.rights else '127.0.0.1'}/my_singing_monsters/dlc/{version}/r{user.id}-TEST/files.json"
 
 
 async def refresh_token(username, password, login_type, game_id, vendor, model, os, devid, platform, ip_addr, is_refresh_token):
