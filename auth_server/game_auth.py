@@ -190,7 +190,7 @@ async def refresh_token(username, password, login_type, game_id, vendor, model, 
         await user.add_login(ip_addr, model, vendor, os, devid, platform)
 
         ugid = md5(f"user_game_id:{user.id}")[:10]
-        token = encrypt_token(user.username, ugid, login_type, user.id, game_id, rights=user.rights)
+        token = encrypt_token(user.username, ugid, login_type, user.id, game_id, rights=user.rights, lang=user.lang)
 
         await cache_login_data(game_id, username, password, login_type,
                                {'user_game_id': [ugid], 'login_types': [login_type], 'access_token': token,
@@ -248,7 +248,7 @@ async def pregame_setup(access_token, access_key, client_version):
 async def add_plugins(user: User, client_version) -> list:
     updates = []
 
-    if 'game_player' not in user.rights:
+    if 'can_play' not in user.rights:
         with open('content/plugins/important_messages/beta_testing.xml', 'rb') as f:
             fdata = f.read()
 

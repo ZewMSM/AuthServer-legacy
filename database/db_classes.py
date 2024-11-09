@@ -1,3 +1,4 @@
+from ctypes.wintypes import SHORT
 from datetime import datetime
 
 from sqlalchemy import *
@@ -10,8 +11,6 @@ from sqlalchemy.orm import DeclarativeBase
 
 
 class Base(AsyncAttrs, DeclarativeBase):
-    id = Column(BIGINT(), primary_key=True, unique=True, nullable=False)
-
     created_at = Column(TIMESTAMP(), nullable=False, default=datetime.now())
     changed_at = Column(TIMESTAMP(), nullable=False, default=datetime.now())
 
@@ -47,3 +46,25 @@ class UserLoginDB(Base):
     device_id = Column(String, nullable=True, default="")
     os_version = Column(String, nullable=True, default="")
     platform = Column(String, nullable=True, default="")
+
+
+###################### -------    SOCIALS    ------- ######################
+
+
+class TelegramUserDB(Base):
+    __tablename__ = "telegram_users"
+
+    id = Column(BIGINT(), primary_key=True, unique=True, nullable=False)
+
+    first_name = Column(String, nullable=False)
+    last_name = Column(String, nullable=True)
+    username = Column(String, nullable=True)
+    role = Column(String, nullable=False, default='nobody')
+
+
+class TelegramBindingsDB(Base):
+    __tablename__ = "telegram_bindings"
+
+    telegram_id = Column(BIGINT(), primary_key=True, nullable=False)
+    game_id = Column(Integer, primary_key=True, nullable=False)
+    user_id = Column(Integer, nullable=False)

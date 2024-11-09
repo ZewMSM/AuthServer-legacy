@@ -74,7 +74,7 @@ class BaseAdapter(metaclass=BaseAdapterMeta):
     async def load_all_by(cls: Type[T], query_class, query) -> List[T]:  # match_type: ignore
         async with Session() as session:
             db_instances = (await session.execute(select(cls._db_model).where(query_class == query))).scalars().all()
-            return [await cls.from_db_instance(db_instance) for db_instance in db_instances]
+            return await asyncio.gather(*[asyncio.create_task(cls.from_db_instance(db_instance)) for db_instance in db_instances])
 
     @classmethod
     async def load_all(cls: Type[T]) -> List[T]:
@@ -83,7 +83,7 @@ class BaseAdapter(metaclass=BaseAdapterMeta):
         async with Session() as session:
             result = await session.execute(select(cls._db_model))
             db_instances = result.scalars().all()
-            return [await cls.from_db_instance(db_instance) for db_instance in db_instances]
+            return await asyncio.gather(*[asyncio.create_task(cls.from_db_instance(db_instance)) for db_instance in db_instances])
 
     @classmethod
     async def from_db_instance(cls: Type[T], db_instance) -> T:
@@ -114,6 +114,12 @@ class BaseAdapter(metaclass=BaseAdapterMeta):
             if db_instance:
                 await session.delete(db_instance)
                 await session.commit()
+
+        if self._enable_caching:
+            try:
+                await RedisSession.hdel(f"{self._db_model.__tablename__}_db", str(self.id))
+            except:
+                ...
 
     async def __aenter__(self):
         return self
