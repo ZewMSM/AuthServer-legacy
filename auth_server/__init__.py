@@ -2,6 +2,7 @@ import logging
 
 import uvicorn
 from fastapi import FastAPI, Request
+from fastapi.responses import RedirectResponse
 
 from auth_server import game_auth
 from auth_server.game_auth import create_anon_account
@@ -75,6 +76,17 @@ async def get_server_info(request: Request):
 async def dlc(version: str, user_id: int, rev_hash: str, file_path):
     return await game_auth.get_dlc_file(version, file_path, user_id)
 
+
+@app.get('/play', tags=['GAME'])
+async def play_deeplink(request: Request):
+    user_agent = request.headers.get("User-Agent", "").lower()
+
+    if "android" in user_agent:
+        return RedirectResponse("https://link.bbbgame.net/msm")
+    elif "iphone" in user_agent or "ipad" in user_agent:
+        return RedirectResponse("fb346076328763703://")
+    else:
+        return "what"
 
 async def start_auth_server():
     logger.info("Starting auth server...")
