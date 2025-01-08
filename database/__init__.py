@@ -11,7 +11,7 @@ logger = logging.getLogger('Database')
 engine = create_async_engine(f'postgresql+asyncpg://{environ.get("POSTGRES_USER")}:{environ.get("POSTGRES_PASSWD")}@'
                              f'{environ.get("POSTGRES_HOST")}:{environ.get("POSTGRES_PORT")}/{environ.get("POSTGRES_NAME")}', echo=True)
 Session = async_sessionmaker(bind=engine, expire_on_commit=False)
-RedisSession = aioredis.Redis(host=environ.get("REDIS_AUTH_HOST"), port=environ.get("REDIS_AUTH_PORT"))
+RedisSession = aioredis.Redis(host=environ.get("REDIS_AUTH_HOST"), port=int(environ.get("REDIS_AUTH_PORT")))
 
 
 async def init_database():

@@ -2,7 +2,7 @@ import logging
 
 import uvicorn
 from fastapi import FastAPI, Request
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, HTMLResponse
 
 from auth_server import game_auth
 from auth_server.game_auth import create_anon_account
@@ -10,7 +10,6 @@ from auth_server.game_auth import create_anon_account
 logger = logging.getLogger('Default')
 
 app = FastAPI()
-
 
 @app.post("/purchases/steam/my_singing_monsters/ProcessInitializedPurchases.php", tags=['STUFF'])
 async def steam_purchases(request: Request):
@@ -77,16 +76,44 @@ async def dlc(version: str, user_id: int, rev_hash: str, file_path):
     return await game_auth.get_dlc_file(version, file_path, user_id)
 
 
+with open("html/deeplink.html", "r") as f:
+    deeplink_html = f.read()
+
+@app.get("/", tags=["GAME"])
+async def root():
+    return RedirectResponse(url="/play")
 @app.get('/play', tags=['GAME'])
 async def play_deeplink(request: Request):
     user_agent = request.headers.get("User-Agent", "").lower()
 
     if "android" in user_agent:
-        return RedirectResponse("https://link.bbbgame.net/msm")
-    elif "iphone" in user_agent or "ipad" in user_agent:
-        return RedirectResponse("fb346076328763703://")
+        deeplink = "https://link.bbbgame.net/msm"
+    elif "iphone" in user_agent or "ipad" in user_agent or "mac" in user_agent or 'os x' in user_agent:
+        deeplink = "fb346076328763703://"
     else:
-        return "what"
+        deeplink = ''
+
+    return HTMLResponse(content=deeplink_html
+                        .replace('$deeplink', deeplink)
+                        .replace('$android',"https://t.me/msm_hacks/1814")
+                        .replace('$ios',"https://t.me/msm_hacks/1812")
+                        .replace('$windows',"none://")
+                        .replace('$name', 'ZewMSM v4.6.1'))
+
+
+@app.get('/muppets', tags=['MUPPETS'])
+async def muppets_deeplink(request: Request):
+    user_agent = request.headers.get("User-Agent", "").lower()
+
+    return HTMLResponse(content=deeplink_html
+                        .replace('$deeplink', 'none://')
+                        .replace('$android',"none://")
+                        .replace('$ios',"none://")
+                        .replace('$windows',"none://")
+                        .replace('$name', 'ZewMSM Muppets'))
+
+
+
 
 async def start_auth_server():
     logger.info("Starting auth server...")
