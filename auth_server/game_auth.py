@@ -241,7 +241,7 @@ async def pregame_setup(access_token, access_key, client_version):
 
     content_url = generate_content_url(client_version, user)
     return AuthResponse.send_ok(
-        {"serverIp": environ.get('SERVER_IP') if 'localhost' not in user.rights else '127.0.0.1', "serverId": 1,
+        {"serverIp": environ.get('SERVER_IP') if 'localhost' not in user.rights else '127.0.0.1:2222', "serverId": 1,
          "contentUrl": content_url})
 
 
