@@ -245,6 +245,7 @@ async def pregame_setup(access_token, access_key, client_version):
          "contentUrl": content_url})
 
 
+
 async def add_plugins(user: User, client_version) -> list:
     updates = []
 
